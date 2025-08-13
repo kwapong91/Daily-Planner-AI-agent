@@ -1,0 +1,7 @@
+uvicorn
+requests
+fastapi[standard]
+SQLAlchemy
+Alembic
+psycopg2-binary
+pydantic-settings
