@@ -1,5 +1,5 @@
+# Use this command to run the server: fastapi dev main.py
 from fastapi import FastAPI
-import requests
 
 app = FastAPI(title="AI Planner")
 
