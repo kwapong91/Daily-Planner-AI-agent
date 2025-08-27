@@ -6,6 +6,7 @@ cursor = conn.cursor()
 table_creation_query = """
     CREATE TABLE users (
         user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
