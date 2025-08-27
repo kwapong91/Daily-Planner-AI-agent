@@ -14,7 +14,7 @@ def add_goal(email, title, description):
         f"""
             SELECT user_id
             FROM users
-            WHERE email = {email}
+            WHERE email = "{email}"
         """
     )
     cursor.execute(
@@ -26,11 +26,25 @@ def add_task(email, title, status):
         f"""
             SELECT goal_id
             FROM goals
-            WHERE 
+            WHERE user_id = (
+                SELECT user_id
+                FROM users
+                WHERE email = "{email}"
+            );
         """
     )
+    cursor.execute(
+       f"INSERT INTO tasks (goal_id, title, status) VALUE ({goal_id}, {title}, {status})"
+    )
 # Fetch user by ID or email
-
+def fetch_user(email, user_id):
+    cursor.execute(
+        f"""
+            SELECT username
+            FROM users
+            WHERE email = "{email}" or user_id = {user_id}
+         """
+    )
 # Fetch goals for a user
 
 # Fetch all task for a goal
