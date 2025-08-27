@@ -6,8 +6,9 @@ cursor = conn.cursor()
 # Add a new user
 def add_user(name, email, password):
     cursor.execute(
-        f"INSERT INTO users (name, email, password_hash) VALUE ({name}, {email}, {password})"
+        f"INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)"
     )
+    conn.commit
 # Add a new goal
 def add_goal(email, title, description):
     user_id = cursor.execute(
@@ -18,7 +19,7 @@ def add_goal(email, title, description):
         """
     )
     cursor.execute(
-        f"INSERT INTO users (user_id, title, description) VALUE ({user_id}, {title}, {description})"
+        f"INSERT INTO users (user_id, title, description) VALUES (?, ?, ?)"
     )
 # Add a new task
 def add_task(email, title, status):
@@ -29,12 +30,12 @@ def add_task(email, title, status):
             WHERE user_id = (
                 SELECT user_id
                 FROM users
-                WHERE email = "{email}"
+                WHERE email = "?"
             );
         """
     )
     cursor.execute(
-       f"INSERT INTO tasks (goal_id, title, status) VALUE ({goal_id}, {title}, {status})"
+       f"INSERT INTO tasks (goal_id, title, status) VALUES (?, ?, ?)"
     )
 # Fetch user by ID or email
 def fetch_user(email, user_id):
@@ -42,7 +43,7 @@ def fetch_user(email, user_id):
         f"""
         SELECT username
         FROM users
-        WHERE email = "{email}" or user_id = {user_id}
+        WHERE email = "?" or user_id = ?
          """
     )
 # Fetch goals for a user
@@ -51,7 +52,7 @@ def fetch_goals(user_id):
         f"""
         SELECT title
         FROM goals
-        WHERE user_id = "{user_id}"
+        WHERE user_id = "?"
         """
     )
 
