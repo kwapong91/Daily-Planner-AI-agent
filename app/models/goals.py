@@ -10,7 +10,7 @@ table_creation_query = """
         title TEXT NOT NULL,
         description TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        status TEXT NOT NULL,
+        status TEXT NOT NULL default "pending",
         FOREIGN KEY (user_id) REFERENCES users(user_id)
     )
 """

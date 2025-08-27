@@ -5,7 +5,7 @@ cursor = conn.cursor()
 
 table_creation_query = """
     CREATE TABLE tasks (
-        task_id INTEGER PRIMARY KEY NOT NULL,
+        task_id INTEGER PRIMARY KEY, 
         goal_id NOT NULL,
         title TEXT NOT NULL,
         status TEXT NOT NULL default 'pending',
@@ -26,3 +26,5 @@ else:
     print("Table is ready!")
 finally:
     cursor.close()
+
+# Made changes to primary key by making it not null
