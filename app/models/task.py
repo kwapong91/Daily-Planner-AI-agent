@@ -8,7 +8,8 @@ table_creation_query = """
         task_id INTEGER PRIMARY KEY, 
         goal_id NOT NULL,
         title TEXT NOT NULL,
-        status TEXT NOT NULL default 'pending',
+        description TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
         due_date TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (goal_id) REFERENCES goals(goal_id)

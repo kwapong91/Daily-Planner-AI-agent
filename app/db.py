@@ -53,7 +53,7 @@ def add_goal(email, title, description):
         "INSERT INTO goals (user_id, title, description) VALUES (?, ?, ?)",
         (user_id, title, description)
         )
-        added_goal_message = f"Added the following goal: {title}"
+        added_goal_message = f"New goal has been added: {title}"
         conn.commit()
 
     except sqlite3.OperationalError as e:
@@ -69,7 +69,7 @@ def add_goal(email, title, description):
         cursor.close()
         conn.close()        
         if added_goal_message:
-            print(f"New goal has been added: {added_goal_message}")
+            print(added_goal_message)
         else:
             print("New goal was unable to be added")
 
@@ -81,66 +81,156 @@ def add_goal(email, title, description):
 
 
 # Add a new task
-def add_task(email, title, status):
-    cursor.execute(
-        """
-        SELECT goal_id
-        FROM goals
-        WHERE user_id = (
-            SELECT user_id
-            FROM users
-            WHERE email = ?
-            )
-        """,
-        (email,)
-    )
-    result = cursor.fetchone()
-    if result is None:
-        print('There was an error with retrieving the goal_id')
-        return
-    
-    goal_id = result[0]
+def add_task(email, title, description):
+    conn = sqlite3.connect('models/planner.db')
+    cursor = conn.cursor()
+    success_message = None
 
-    cursor.execute(
-       "INSERT INTO tasks (goal_id, title, status) VALUES (?, ?, ?)",
-       (goal_id, title, status)
-    )
-    conn.commit()
-    conn.close()
+    try:
+
+        cursor.execute(
+            """
+            SELECT goal_id
+            FROM goals
+            WHERE user_id = (
+                SELECT user_id
+                FROM users
+                WHERE email = ?
+                )
+            """,
+            (email,)
+        )
+
+        result = cursor.fetchone()
+        if result is None:
+            print('There was an error with retrieving this accounts goals.')
+            return
+        goal_id = result[0]
+
+        cursor.execute(
+        "INSERT INTO tasks (goal_id, title, description) VALUES (?, ?, ?)",
+        (goal_id, title, description)
+        )
+
+        conn.commit()
+        success_message = f"The following task was added: {title}"
+
+    except sqlite3.OperationalError as e:
+        conn.rollback()
+        print(f"Operational error: {e}")
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        print(f"Integrity error: {e}")
+    except sqlite3.Error as e:
+        conn.rollback()
+        print(f"Database error: {e}")
+    finally:
+        cursor.close()
+        conn.close()        
+        if success_message:
+            print(success_message)
+        else:
+            print("New task was unable to be added")
 
 
 # Fetch user by ID or email
-def fetch_user(email, user_id):
-    cursor.execute(
-        """
-        SELECT username
-        FROM users
-        WHERE email = ? or user_id = ?
-         """,
-        (email, user_id)
-    )
-    result = cursor.fetchone()
-    if result is None:
-        print('There was an error getting the user with the ID or email')
-        return
-    return result[0]
+def fetch_user(email):
+    conn = sqlite3.connect('models/planner.db')
+    cursor = conn.cursor()
+    success_message = None
+    result = None
+    
+    try:
+            
+        cursor.execute(
+            """
+            SELECT username
+            FROM users
+            WHERE email = ?
+            """,
+            (email,)
+        )
+        
+        result = cursor.fetchone()
+        if result is None:
+            print('There was an error getting the user information with the email')
+            return
+        
+        success_message = f"Here is the users  email: {result[0]}"
+        return result[0]
+    
+    except sqlite3.OperationalError as e:
+        conn.rollback()
+        print(f"Operational error: {e}")
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        print(f"Integrity error: {e}")
+    except sqlite3.Error as e:
+        conn.rollback()
+        print(f"Database error: {e}")
+    finally:
+        cursor.close()
+        conn.close()        
+        if success_message:
+            print(success_message)
+        else:
+            print("Fetch was unsuccessful")
 
 
 # Fetch goals for a user
-def fetch_goals(user_id):
-    cursor.execute(
-        """
-        SELECT title
-        FROM goals
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    )
-    result = cursor.fetchone()
-    if result is None:
-        print("There was an error in fetching the goal for the user using title")
-        return
-    return result[0]
+def fetch_goals(email):
+    conn = sqlite3.connect('models/planner.db')
+    cursor = conn.cursor()
+    success_message = None
+    result = None
+
+    try:
+        cursor.execute(
+            """
+            SELECT user_id
+            FROM users
+            WHERE email = ?
+            """
+            (email,)
+        )
+        result = cursor.fetchone()
+        if result is None:
+            print("Unable to find user")
+            return
+        user_id = result[0]
+            
+        cursor.execute(
+            """
+            SELECT title
+            FROM goals
+            WHERE user_id = ?
+            """,
+            (user_id,)
+        )
+        result = cursor.fetchone()
+        if result is None:
+            print("There was an error in fetching the goal for the user using title")
+            return
+    
+        success_message = f"Here is the users  email: {result[0]}"
+        return result[0]
+    
+    except sqlite3.OperationalError as e:
+        conn.rollback()
+        print(f"Operational error: {e}")
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        print(f"Integrity error: {e}")
+    except sqlite3.Error as e:
+        conn.rollback()
+        print(f"Database error: {e}")
+    finally:
+        cursor.close()
+        conn.close()        
+        if success_message:
+            print(success_message)
+        else:
+            print("Fetch was unsuccessful")
 
 # Fetch all task for a goal
 def fetch_task_for_goal(email):
