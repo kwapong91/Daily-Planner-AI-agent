@@ -11,4 +11,4 @@ conn = sqlite3.connect('models/planner.db')
 
 # db.fetch_user('kwapong91@gmail.com')
 
-db.fetch_goals('kwapong91@gmail.com')
+db.fetch_goals('danielpark@gmail.com')

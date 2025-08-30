@@ -190,14 +190,15 @@ def fetch_goals(email):
             SELECT user_id
             FROM users
             WHERE email = ?
-            """
+            """,
             (email,)
         )
-        result = cursor.fetchone()
+        result = str(cursor.fetchmany())
+
         if result is None:
-            print("Unable to find user")
+            print(result)
             return
-        user_id = result[0]
+        user_id = result
             
         cursor.execute(
             """
