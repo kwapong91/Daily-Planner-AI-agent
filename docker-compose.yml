@@ -1,0 +1,9 @@
+services:
+  fastapi-planner:
+    container_name: fastapi-planner
+    build: fastapi-planner
+    ports:
+      - ${port}:5004
+    env_file:
+      - .env.${env}
+

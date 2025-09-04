@@ -193,12 +193,12 @@ def fetch_goals(email):
             """,
             (email,)
         )
-        result = str(cursor.fetchmany())
+        result = cursor.fetchone()
 
         if result is None:
-            print(result)
+            print("Unable to find user")
             return
-        user_id = result
+        user_id = result[0]
             
         cursor.execute(
             """
@@ -213,7 +213,7 @@ def fetch_goals(email):
             print("There was an error in fetching the goal for the user using title")
             return
     
-        success_message = f"Here is the users  email: {result[0]}"
+        success_message = f"Here is the users  goal: {result[0]}"
         return result[0]
     
     except sqlite3.OperationalError as e:
@@ -245,7 +245,7 @@ def fetch_task_for_goal(email):
         """,
         (email,)
     )
-    result = cursor.fetchone()
+    result = cursor.fetchmany()
     if result is None:
         print("There was an erroing fetching the task for the goals for the user")
         return
